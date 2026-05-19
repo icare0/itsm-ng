@@ -5108,6 +5108,11 @@ abstract class CommonITILObject extends CommonDBTM
             && !($hiddenFields['_users_id_assign'] ?? false)
             && !$this->isUser(CommonITILActor::ASSIGN, Session::getLoginUserID())
             && $assignAllowed;
+        $canSelfObserver = !$isNew
+            && !$isClosed
+            && !($hiddenFields['_users_id_observer'] ?? false)
+            && !$this->isUser(CommonITILActor::OBSERVER, Session::getLoginUserID())
+            && !$this->isUser(CommonITILActor::REQUESTER, Session::getLoginUserID());
 
         $roleDefinitions = [
             [
@@ -5234,7 +5239,7 @@ abstract class CommonITILObject extends CommonDBTM
                 'selfAssign'  => !empty($panelDefinition['selfAssign']) ? [
                     'fieldName'  => $this->getForeignKeyField(),
                     'itemId'     => $ID,
-                    'buttonName' => 'addme_assign',
+                    'buttonName' => 'addme_' . $panelDefinition['actorType'],
                     'label'      => __('Associate myself'),
                 ] : null,
             ];
